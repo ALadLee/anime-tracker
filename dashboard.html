@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anime Tracker — Dashboard</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="icon-circle-sm">🎴</div>
+        <span class="brand-text">Anime Tracker</span>
+      </div>
+      <div class="topbar-right">
+        <div class="user-pill">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <span id="userName">Loading…</span>
+        </div>
+        <button class="btn-logout" id="logoutBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content">
+
+      <!-- Search -->
+      <div class="search-row">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="searchInput" placeholder="Search anime by name..." />
+        </div>
+        <select class="filter-select" id="filterSelect">
+          <option value="all">All</option>
+          <option value="Watching">Watching</option>
+          <option value="Finished">Finished</option>
+          <option value="Plan to Watch">Plan to Watch</option>
+        </select>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon watching">▶</div>
+          <div>
+            <div class="stat-label">Watching</div>
+            <div class="stat-value" id="statWatching">0</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon finished">✓</div>
+          <div>
+            <div class="stat-label">Finished</div>
+            <div class="stat-value" id="statFinished">0</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon plan">⏱</div>
+          <div>
+            <div class="stat-label">Plan to Watch</div>
+            <div class="stat-value" id="statPlan">0</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon total">★</div>
+          <div>
+            <div class="stat-label">Total Anime</div>
+            <div class="stat-value" id="statTotal">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="categories-grid">
+        <section class="category-col">
+          <div class="category-head watching">
+            <h2>Watching</h2>
+            <span class="count-badge" id="countWatching">0</span>
+          </div>
+          <div class="card-list" id="listWatching">
+            <div class="loading-row"><span class="spinner"></span> Loading…</div>
+          </div>
+        </section>
+
+        <section class="category-col">
+          <div class="category-head finished">
+            <h2>Finished</h2>
+            <span class="count-badge" id="countFinished">0</span>
+          </div>
+          <div class="card-list" id="listFinished">
+            <div class="loading-row"><span class="spinner"></span> Loading…</div>
+          </div>
+        </section>
+
+        <section class="category-col">
+          <div class="category-head plan">
+            <h2>Plan to Watch</h2>
+            <span class="count-badge" id="countPlan">0</span>
+          </div>
+          <div class="card-list" id="listPlan">
+            <div class="loading-row"><span class="spinner"></span> Loading…</div>
+          </div>
+        </section>
+      </div>
+
+    </main>
+
+    <!-- Floating add button -->
+    <button class="fab" id="fabAdd" aria-label="Add anime">+</button>
+  </div>
+
+  <!-- Add / Edit Modal -->
+  <div class="modal-overlay" id="animeModalOverlay">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3><span class="icon-circle-sm" id="modalIcon">+</span><span id="modalTitle">Add Anime</span></h3>
+        <button class="modal-close" id="modalClose" aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="animeForm" novalidate>
+        <input type="hidden" id="animeId" />
+        <div class="form-grid">
+          <div class="field span-2">
+            <label for="animeName">Anime Name</label>
+            <input type="text" id="animeName" placeholder="e.g. Jujutsu Kaisen" maxlength="120" required />
+          </div>
+
+          <div class="field">
+            <label for="animeSeason">Season</label>
+            <input type="number" id="animeSeason" placeholder="1" min="1" max="50" />
+          </div>
+
+          <div class="field">
+            <label for="animeStatus">Status</label>
+            <select id="animeStatus" required>
+              <option value="Watching">Watching</option>
+              <option value="Finished">Finished</option>
+              <option value="Plan to Watch">Plan to Watch</option>
+            </select>
+          </div>
+
+          <div class="field episode-field span-2" id="episodeField">
+            <label for="animeEpisode">Current Episode</label>
+            <input type="number" id="animeEpisode" placeholder="Enter current episode" min="0" max="9999" />
+            <div class="field-hint">Only required if status is "Watching".</div>
+          </div>
+
+          <div class="field span-2">
+            <label for="animeNotes">Notes (Optional)</label>
+            <textarea id="animeNotes" maxlength="300" placeholder="Add any notes about this anime..."></textarea>
+            <div class="char-count"><span id="notesCount">0</span> / 300</div>
+          </div>
+        </div>
+
+        <div id="modalError" class="form-error"></div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveBtn">Save Anime</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete confirm modal -->
+  <div class="modal-overlay" id="confirmOverlay">
+    <div class="modal-box confirm-box">
+      <div class="confirm-icon">🗑</div>
+      <h3 style="margin-bottom: 10px;">Delete this anime?</h3>
+      <p>This action can't be undone. The entry will be permanently removed from your list.</p>
+      <div class="confirm-actions">
+        <button class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+        <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toastStack"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
