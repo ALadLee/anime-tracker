@@ -185,7 +185,7 @@ input, select, textarea {
   align-items: center;
 }
 
-.input-wrap svg {
+.input-wrap > svg {
   position: absolute;
   left: 14px;
   width: 16px;
@@ -513,6 +513,34 @@ input, select, textarea {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 18px;
+  transition: grid-template-columns 200ms ease;
+}
+
+/* Single-category maximised view */
+.categories-grid.single-view {
+  grid-template-columns: 1fr;
+}
+
+.category-col.col-hidden {
+  display: none;
+}
+
+.category-col.col-maximized {
+  min-height: 400px;
+}
+
+.category-col.col-maximized .card-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  align-content: start;
+  flex: none;
+}
+
+/* Empty / loading states span all grid columns in maximised view */
+.category-col.col-maximized .card-list .empty-state,
+.category-col.col-maximized .card-list .loading-row {
+  grid-column: 1 / -1;
 }
 
 .category-col {
@@ -606,7 +634,7 @@ input, select, textarea {
 
 .anime-thumb {
   width: 46px;
-  height: 46px;
+  height: 64px;
   flex-shrink: 0;
   border-radius: 10px;
   background: linear-gradient(145deg, var(--purple-dark), var(--bg-soft));
@@ -614,6 +642,15 @@ input, select, textarea {
   align-items: center;
   justify-content: center;
   font-size: 18px;
+  overflow: hidden;
+}
+
+.anime-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
 }
 
 .anime-info {
@@ -853,6 +890,94 @@ input, select, textarea {
 
 .episode-field.show {
   display: block;
+}
+
+/* Cover art finder row inside modal */
+.art-finder {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.art-preview-thumb {
+  width: 56px;
+  height: 78px;
+  border-radius: 8px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.art-preview-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+.art-finder-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.art-finder-row {
+  display: flex;
+  gap: 8px;
+}
+
+.art-finder-row input {
+  flex: 1;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--text);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.art-finder-row input:focus {
+  outline: none;
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px var(--purple-glow);
+}
+
+.art-finder-row input::placeholder {
+  color: var(--text-faint);
+}
+
+.btn-find-art {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--purple-light);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  transition: all var(--transition);
+  cursor: pointer;
+  min-width: 90px;
+  height: 38px;
+}
+
+.btn-find-art:hover {
+  border-color: var(--purple);
+  background: rgba(139, 92, 246, 0.12);
+}
+
+.btn-find-art:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .modal-actions {

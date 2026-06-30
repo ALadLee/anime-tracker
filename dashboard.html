@@ -77,7 +77,7 @@
 
       <!-- Categories -->
       <div class="categories-grid">
-        <section class="category-col">
+        <section class="category-col" data-category="Watching">
           <div class="category-head watching">
             <h2>Watching</h2>
             <span class="count-badge" id="countWatching">0</span>
@@ -87,7 +87,7 @@
           </div>
         </section>
 
-        <section class="category-col">
+        <section class="category-col" data-category="Finished">
           <div class="category-head finished">
             <h2>Finished</h2>
             <span class="count-badge" id="countFinished">0</span>
@@ -97,7 +97,7 @@
           </div>
         </section>
 
-        <section class="category-col">
+        <section class="category-col" data-category="Plan to Watch">
           <div class="category-head plan">
             <h2>Plan to Watch</h2>
             <span class="count-badge" id="countPlan">0</span>
@@ -130,6 +130,20 @@
           <div class="field span-2">
             <label for="animeName">Anime Name</label>
             <input type="text" id="animeName" placeholder="e.g. Jujutsu Kaisen" maxlength="120" required />
+          </div>
+
+          <div class="field span-2">
+            <label>Cover Art</label>
+            <div class="art-finder">
+              <div class="art-preview-thumb" id="artPreviewThumb">🎬</div>
+              <div class="art-finder-right">
+                <div class="art-finder-row">
+                  <input type="url" id="animeImageUrl" placeholder="Paste a direct image URL…" autocomplete="off" />
+                  <button type="button" id="findArtBtn" class="btn-find-art">Auto-find</button>
+                </div>
+                <div class="field-hint" id="artHint">Click <strong>Auto-find</strong> to search MyAnimeList, or paste any direct image URL.</div>
+              </div>
+            </div>
           </div>
 
           <div class="field">
