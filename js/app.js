@@ -262,17 +262,41 @@ filterSelect.addEventListener("change", renderAll);
 
 /**
  * Searches MyAnimeList via the free Jikan API and returns
- * the first matching cover image URL, or null if not found.
+ * the best matching cover image URL for the given title + season.
  * No API key required.  Rate limit: ~3 requests/second.
+ *
+ * Strategy:
+ *  - Season 1 / no season → search by title alone (first result).
+ *  - Season 2+ → search "Title Season N" first (MAL usually has a
+ *    separate entry per season with that wording).  If that returns
+ *    nothing, fall back to just the title so we always get something.
  */
-async function findCoverArt(title) {
-  try {
+async function findCoverArt(title, season = null) {
+  async function jikanSearch(query, limit = 3) {
     const res = await fetch(
-      `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(title)}&limit=1&sfw=true`
+      `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=${limit}&sfw=true`
     );
     if (!res.ok) return null;
     const json = await res.json();
-    return json.data?.[0]?.images?.jpg?.image_url ?? null;
+    return json.data ?? null;
+  }
+
+  try {
+    // For season 2+, first try a season-specific query
+    if (season && season > 1) {
+      const seasonQuery  = `${title} Season ${season}`;
+      const seasonResult = await jikanSearch(seasonQuery);
+
+      if (seasonResult && seasonResult.length > 0) {
+        return seasonResult[0].images.jpg.image_url;
+      }
+      // Nothing found with season — fall through to plain title search
+    }
+
+    // Plain title search (season 1 or fallback)
+    const plainResult = await jikanSearch(title, 1);
+    return plainResult?.[0]?.images?.jpg?.image_url ?? null;
+
   } catch {
     return null;
   }
