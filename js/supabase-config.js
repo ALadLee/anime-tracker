@@ -10,8 +10,8 @@
 // (see schema.sql in this project).
 // =========================================================
 
-const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Y3JqYWR5b3FkZmhxeWFreWpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MjUwMTgsImV4cCI6MjA5ODQwMTAxOH0.GV4SQ-kzAAkFQkAM-h4xOY5D6BdCz3JcZlIUYNq8BVQ";
+const SUPABASE_URL = "https://ixcrjadyoqdfhqyakyjj.supabase.co";
 
 // Create a single shared Supabase client used across all pages.
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
