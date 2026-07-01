@@ -13,17 +13,19 @@ const searchInput      = document.getElementById("searchInput");
 const filterSelect     = document.getElementById("filterSelect");
 
 const statWatching     = document.getElementById("statWatching");
-const statFinished     = document.getElementById("statFinished");
+const statDropped      = document.getElementById("statDropped");
 const statPlan         = document.getElementById("statPlan");
 const statTotal        = document.getElementById("statTotal");
 
 const listWatching     = document.getElementById("listWatching");
-const listFinished     = document.getElementById("listFinished");
+const listDropped      = document.getElementById("listDropped");
 const listPlan         = document.getElementById("listPlan");
+const listFinished     = document.getElementById("listFinished");
 
 const countWatching    = document.getElementById("countWatching");
-const countFinished    = document.getElementById("countFinished");
+const countDropped     = document.getElementById("countDropped");
 const countPlan        = document.getElementById("countPlan");
+const countFinished    = document.getElementById("countFinished");
 
 const categoriesGrid   = document.querySelector(".categories-grid");
 
@@ -108,8 +110,9 @@ async function loadAnime() {
 function setLoadingState() {
   const html = `<div class="loading-row"><span class="spinner"></span> Loading…</div>`;
   listWatching.innerHTML = html;
-  listFinished.innerHTML = html;
+  listDropped.innerHTML  = html;
   listPlan.innerHTML     = html;
+  listFinished.innerHTML = html;
 }
 
 // =========================================================
@@ -119,17 +122,19 @@ function updateLayoutMode() {
   const filter = filterSelect.value;
 
   if (filter === "all") {
-    // Restore three-column overview
     categoriesGrid.classList.remove("single-view");
     document.querySelectorAll(".category-col").forEach((col) => {
+      const isDefaultHidden = col.classList.contains("col-default-hidden");
       col.classList.remove("col-hidden", "col-maximized");
+      if (isDefaultHidden) {
+        col.classList.add("col-hidden");
+      }
     });
   } else {
-    // Maximise the selected category
     categoriesGrid.classList.add("single-view");
     document.querySelectorAll(".category-col").forEach((col) => {
       if (col.dataset.category === filter) {
-        col.classList.remove("col-hidden");
+        col.classList.remove("col-hidden", "col-default-hidden");
         col.classList.add("col-maximized");
       } else {
         col.classList.add("col-hidden");
@@ -158,23 +163,27 @@ function renderAll() {
 
   const filtered = getFilteredAnime();
   const watching = filtered.filter((a) => a.status === "Watching");
-  const finished = filtered.filter((a) => a.status === "Finished");
+  const dropped  = filtered.filter((a) => a.status === "Dropped");
   const planned  = filtered.filter((a) => a.status === "Plan to Watch");
+  const finished = filtered.filter((a) => a.status === "Finished");
 
   renderColumn(listWatching, watching, "watching",
     "Nothing being watched",   "Add anime you're currently watching.");
-  renderColumn(listFinished, finished, "finished",
-    "Nothing finished yet",    "Completed anime will appear here.");
+  renderColumn(listDropped,  dropped,  "dropped",
+    "Nothing dropped yet",     "Anime you stopped watching will appear here.");
   renderColumn(listPlan,     planned,  "plan",
     "Your plan list is empty", "Add anime you want to watch later.");
+  renderColumn(listFinished, finished, "finished",
+    "Nothing finished yet",    "Completed anime will appear here.");
 
   countWatching.textContent = watching.length;
-  countFinished.textContent = finished.length;
+  countDropped.textContent  = dropped.length;
   countPlan.textContent     = planned.length;
+  countFinished.textContent = finished.length;
 
   // Stats always reflect the full unfiltered list
   statWatching.textContent = allAnime.filter((a) => a.status === "Watching").length;
-  statFinished.textContent = allAnime.filter((a) => a.status === "Finished").length;
+  statDropped.textContent  = allAnime.filter((a) => a.status === "Dropped").length;
   statPlan.textContent     = allAnime.filter((a) => a.status === "Plan to Watch").length;
   statTotal.textContent    = allAnime.length;
 }
@@ -272,7 +281,10 @@ filterSelect.addEventListener("change", renderAll);
  *    nothing, fall back to just the title so we always get something.
  */
 async function findCoverArt(title, season = null) {
-  async function jikanSearch(query, limit = 3) {
+  const normalizedTitle = (title || "").trim();
+  if (!normalizedTitle) return null;
+
+  async function jikanSearch(query, limit = 8) {
     const res = await fetch(
       `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=${limit}&sfw=true`
     );
@@ -282,21 +294,30 @@ async function findCoverArt(title, season = null) {
   }
 
   try {
-    // For season 2+, first try a season-specific query
-    if (season && season > 1) {
-      const seasonQuery  = `${title} Season ${season}`;
-      const seasonResult = await jikanSearch(seasonQuery);
+    const queries = [];
 
-      if (seasonResult && seasonResult.length > 0) {
-        return seasonResult[0].images.jpg.image_url;
-      }
-      // Nothing found with season — fall through to plain title search
+    if (season && season > 1) {
+      queries.push(`${normalizedTitle} Season ${season}`);
+      queries.push(`${normalizedTitle} ${season}`);
     }
 
-    // Plain title search (season 1 or fallback)
-    const plainResult = await jikanSearch(title, 1);
-    return plainResult?.[0]?.images?.jpg?.image_url ?? null;
+    queries.push(normalizedTitle);
 
+    for (const query of queries) {
+      const results = await jikanSearch(query);
+      if (!results || results.length === 0) continue;
+
+      const match = results.find((entry) => {
+        const titleMatch = (entry.title || "").toLowerCase();
+        const normalizedMatch = titleMatch.replace(/\s+/g, " ").trim();
+        return normalizedMatch === normalizedTitle.toLowerCase() || normalizedMatch.includes(normalizedTitle.toLowerCase());
+      }) || results[0];
+
+      const imageUrl = match?.images?.jpg?.image_url;
+      if (imageUrl) return imageUrl;
+    }
+
+    return null;
   } catch {
     return null;
   }
@@ -330,7 +351,8 @@ findArtBtn.addEventListener("click", async () => {
   findArtBtn.textContent = "Searching…";
   artHint.textContent  = "Searching MyAnimeList…";
 
-  const url = await findCoverArt(title);
+  const season = animeSeasonInput.value ? Number(animeSeasonInput.value) : null;
+  const url = await findCoverArt(title, season);
 
   findArtBtn.disabled  = false;
   findArtBtn.textContent = "Auto-find";

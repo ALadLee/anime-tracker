@@ -11,7 +11,7 @@ create table if not exists public.anime (
   user_id uuid not null references auth.users(id) on delete cascade,
   name text not null,
   season integer,
-  status text not null check (status in ('Watching', 'Finished', 'Plan to Watch')),
+  status text not null check (status in ('Watching', 'Finished', 'Dropped', 'Plan to Watch')),
   current_episode integer,
   image_url text,           -- cover art URL (auto-found or pasted manually)
   notes text,

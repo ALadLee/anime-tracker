@@ -495,6 +495,7 @@ input, select, textarea {
 
 .stat-icon.watching { background: rgba(139, 92, 246, 0.18); color: var(--purple-light); }
 .stat-icon.finished { background: rgba(96, 165, 250, 0.18); color: var(--blue); }
+.stat-icon.dropped { background: rgba(248, 113, 113, 0.18); color: var(--red); }
 .stat-icon.plan { background: rgba(244, 114, 182, 0.18); color: var(--pink); }
 .stat-icon.total { background: rgba(52, 211, 153, 0.18); color: var(--green); }
 
@@ -522,6 +523,10 @@ input, select, textarea {
 }
 
 .category-col.col-hidden {
+  display: none;
+}
+
+.category-col.col-default-hidden {
   display: none;
 }
 
@@ -569,6 +574,7 @@ input, select, textarea {
 
 .category-head.watching h2 { color: var(--purple-light); }
 .category-head.finished h2 { color: var(--green); }
+.category-head.dropped h2 { color: var(--red); }
 .category-head.plan h2 { color: var(--pink); }
 
 .count-badge {
@@ -685,6 +691,7 @@ input, select, textarea {
 
 .status-pill.watching { background: rgba(139, 92, 246, 0.18); color: var(--purple-light); }
 .status-pill.finished { background: rgba(52, 211, 153, 0.18); color: var(--green); }
+.status-pill.dropped { background: rgba(248, 113, 113, 0.18); color: var(--red); }
 .status-pill.plan { background: rgba(244, 114, 182, 0.18); color: var(--pink); }
 
 .anime-notes {

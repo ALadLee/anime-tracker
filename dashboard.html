@@ -38,8 +38,9 @@
         <select class="filter-select" id="filterSelect">
           <option value="all">All</option>
           <option value="Watching">Watching</option>
-          <option value="Finished">Finished</option>
           <option value="Plan to Watch">Plan to Watch</option>
+          <option value="Dropped">Dropped</option>
+          <option value="Finished">Finished</option>
         </select>
       </div>
 
@@ -53,10 +54,10 @@
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon finished">✓</div>
+          <div class="stat-icon dropped">✕</div>
           <div>
-            <div class="stat-label">Finished</div>
-            <div class="stat-value" id="statFinished">0</div>
+            <div class="stat-label">Dropped</div>
+            <div class="stat-value" id="statDropped">0</div>
           </div>
         </div>
         <div class="stat-card">
@@ -87,12 +88,12 @@
           </div>
         </section>
 
-        <section class="category-col" data-category="Finished">
-          <div class="category-head finished">
-            <h2>Finished</h2>
-            <span class="count-badge" id="countFinished">0</span>
+        <section class="category-col" data-category="Dropped">
+          <div class="category-head dropped">
+            <h2>Dropped</h2>
+            <span class="count-badge" id="countDropped">0</span>
           </div>
-          <div class="card-list" id="listFinished">
+          <div class="card-list" id="listDropped">
             <div class="loading-row"><span class="spinner"></span> Loading…</div>
           </div>
         </section>
@@ -103,6 +104,16 @@
             <span class="count-badge" id="countPlan">0</span>
           </div>
           <div class="card-list" id="listPlan">
+            <div class="loading-row"><span class="spinner"></span> Loading…</div>
+          </div>
+        </section>
+
+        <section class="category-col col-default-hidden" data-category="Finished">
+          <div class="category-head finished">
+            <h2>Finished</h2>
+            <span class="count-badge" id="countFinished">0</span>
+          </div>
+          <div class="card-list" id="listFinished">
             <div class="loading-row"><span class="spinner"></span> Loading…</div>
           </div>
         </section>
@@ -156,6 +167,7 @@
             <select id="animeStatus" required>
               <option value="Watching">Watching</option>
               <option value="Finished">Finished</option>
+              <option value="Dropped">Dropped</option>
               <option value="Plan to Watch">Plan to Watch</option>
             </select>
           </div>
